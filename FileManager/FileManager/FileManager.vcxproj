@@ -110,6 +110,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseSocket.h" />
+    <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="Socket.h" />
+    <ClInclude Include="UnixSocket.h" />
+    <ClInclude Include="WindowsSocket.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

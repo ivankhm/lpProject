@@ -49,6 +49,7 @@ int main(int argc, char * argv[])
 		}
 	}
 	thread.join();
+	std::getchar();
 	
 	return 0;
 }
