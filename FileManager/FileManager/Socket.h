@@ -4,7 +4,7 @@
 #if defined(_WIN32) || defined(WIN32) || \
 	defined(_WIN64) || defined(WIN64)
 #define WINDOWS_OS
-#elif defined(__unix__) // defined(X) - OS X Support
+#elif defined(__unix__) || defined(__APPLE__)
 #define UNIX_OS
 #endif
 
@@ -14,7 +14,7 @@
 #endif
 
 #ifdef UNIX_OS 
-//#include "unix_socket.h"
+#include "UnixSocket.h"
 #endif
 
 namespace ftp {

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+
 #include "Socket.h"
 
 void thread_func() {
@@ -32,7 +33,7 @@ int main(int argc, char * argv[])
 		std::cout << "Server: Listen\n";
 	}
 
-	std::thread t(thread_func);
+	std::thread thread(thread_func);
 
 	while (true) {
 		ftp::socket n(s.accept());
@@ -47,6 +48,7 @@ int main(int argc, char * argv[])
 			}
 		}
 	}
-
+	thread.join();
+	
 	return 0;
 }
