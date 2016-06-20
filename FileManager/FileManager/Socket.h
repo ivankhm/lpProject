@@ -31,7 +31,6 @@ namespace ftp {
 				impl_(static_cast<TSocket*>(impl)) { }
 
 			~socket() {
-				close();
 				delete impl_;
 			}
 
@@ -40,9 +39,7 @@ namespace ftp {
 			}
 
 			inline void close() {
-				if (impl_ != nullptr) {
-					impl_->close();
-				}
+				impl_->close();
 			}
 
 			inline bool bind(port_t port) {
