@@ -5,12 +5,13 @@
 
 namespace ftp {
 
+	typedef unsigned short port_t;
+	typedef unsigned long addr_t;
+
 	class base_socket :
 		public utills::non_copyable
 	{
 	public:
-		typedef unsigned short port_t;
-		typedef unsigned long addr_t;
 		typedef void * data_t;
 		typedef const void * cdata_t;
 
