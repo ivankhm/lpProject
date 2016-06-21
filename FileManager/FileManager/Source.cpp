@@ -1,7 +1,8 @@
 #include <iostream>
 #include <thread>
 
-#include "Socket.h"
+#include "Server.h"
+#include "ControlConnection.h"
 
 void thread_func() {
 	ftp::socket s;
@@ -15,39 +16,26 @@ void thread_func() {
 		}
 
 		if (connected) {
-			std::cout << "Client: Connected\n";
-			std::cout << (s.send("hello", 6));
-			break;
+			char buff[20] = { 0 };
+			s.receive(buff, 20);
+
+			std::cout << buff;
 		}
 	}
 }
 
 int main(int argc, char * argv[])
 {
-	ftp::socket s;
-
-	if (s.bind(1035)) {
-		std::cout << "Server: Bind\n";
-	}
-	if (s.listen(5)) {
-		std::cout << "Server: Listen\n";
-	}
-
+	ftp::server srv;
+	
+	srv.run(1035);
 	std::thread thread(thread_func);
 
 	while (true) {
-		ftp::socket n(s.accept());
-
-		if (n.is_opened()) {
-			char buff[10] = { 0 };
-			n.receive(buff, 6);
-
-			if (std::strcmp(buff, "hello") == 0) {
-				std::cout << "Server: Equal\n";
-				break;
-			}
-		}
+		srv.accept_connection()
+			.send_hello();
 	}
+
 	thread.join();
 	std::getchar();
 	
