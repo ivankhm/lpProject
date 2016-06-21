@@ -17,6 +17,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WM_COPYDATA_Receiver", "WM_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Semaphore", "Semaphore\Semaphore.vcxproj", "{F627FA1E-5878-4DB7-A626-85DAA8F3F8C5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PipeClient", "PipeClient\PipeClient.vcxproj", "{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PipeServer", "PipeServer\PipeServer.vcxproj", "{265B0552-8A44-46AC-8792-7F70539A6EB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -73,6 +77,22 @@ Global
 		{F627FA1E-5878-4DB7-A626-85DAA8F3F8C5}.Release|Win32.Build.0 = Release|Win32
 		{F627FA1E-5878-4DB7-A626-85DAA8F3F8C5}.Release|x64.ActiveCfg = Release|x64
 		{F627FA1E-5878-4DB7-A626-85DAA8F3F8C5}.Release|x64.Build.0 = Release|x64
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Debug|Win32.Build.0 = Debug|Win32
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Debug|x64.ActiveCfg = Debug|x64
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Debug|x64.Build.0 = Debug|x64
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Release|Win32.ActiveCfg = Release|Win32
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Release|Win32.Build.0 = Release|Win32
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Release|x64.ActiveCfg = Release|x64
+		{AC42B4E1-E993-41A5-8B57-E4C6DA3254FD}.Release|x64.Build.0 = Release|x64
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Debug|Win32.Build.0 = Debug|Win32
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Debug|x64.ActiveCfg = Debug|x64
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Debug|x64.Build.0 = Debug|x64
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Release|Win32.ActiveCfg = Release|Win32
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Release|Win32.Build.0 = Release|Win32
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Release|x64.ActiveCfg = Release|x64
+		{265B0552-8A44-46AC-8792-7F70539A6EB6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
