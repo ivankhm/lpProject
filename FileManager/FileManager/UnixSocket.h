@@ -43,7 +43,7 @@ namespace ftp {
 			return ::listen(raw_, count) == 0;
 		}
 
-		bool connect(const char * addr, port_t port) {
+		bool connect(const char * ptr, port_t port) {
 			addr_t adres = ::inet_addr(ptr);
 
 			if (adres == -1) {
@@ -95,7 +95,8 @@ namespace ftp {
 
 	private:
 		int raw_;
-		const int INVALID_SOCKET = -1;
+		
+		static const int INVALID_SOCKET = -1;
 	};
 }
 
