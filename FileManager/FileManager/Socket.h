@@ -8,7 +8,6 @@
 #define UNIX_OS
 #endif
 
-#include "BaseSocket.h"
 #ifdef WINDOWS_OS
 #include "WindowsAPI.h"
 #endif
@@ -23,18 +22,18 @@ namespace ftp {
 	typedef const void * cdata_t;
 
 	namespace _internal {
-		template <class TPolicy>
+		template <class TSystem>
 		class socket 
 		{
 		public:
-			typedef typename TPolicy::socket_t socket_t;
-			typedef typename TPolicy::port_t port_t;
-			typedef typename TPolicy::addr_t addr_t;
+			typedef typename TSystem::socket_t socket_t;
+			typedef typename TSystem::port_t port_t;
+			typedef typename TSystem::addr_t addr_t;
 
 			socket() :
-				raw_(TPolicy::InvalidSocket) 
+				raw_(TSystem::InvalidSocket) 
 			{
-				raw_ = TPolicy::CreateSocket();
+				raw_ = TSystem::CreateSocket();
 			}
 
 			~socket() {
@@ -42,54 +41,54 @@ namespace ftp {
 			}
 
 			inline bool is_opened() const {
-				return raw_ != TPolicy::InvalidSocket;
+				return raw_ != TSystem::InvalidSocket;
 			}
 
 			void close() {
 				if (is_opened()) {
 					shutdown();
 				}
-				TPolicy::CloseSocket(raw_);
+				TSystem::CloseSocket(raw_);
 			}
 
 			inline void shutdown() {
-				TPolicy::Shutdown(raw_);
+				TSystem::Shutdown(raw_);
 			}
 
 			inline bool bind(port_t port) {
-				return TPolicy::Bind(raw_, port);
+				return TSystem::Bind(raw_, port);
 			}
 
 			inline bool listen(size_t count) {
-				return TPolicy::Listen(raw_, count);
+				return TSystem::Listen(raw_, count);
 			}
 
 			bool connect(const char * ptr, port_t port) {
-				addr_t addr = TPolicy::ResolveInetAddr(ptr);
+				addr_t addr = TSystem::ResolveInetAddr(ptr);
 
-				if (addr == TPolicy::InvalidAddress) {
-					addr = TPolicy::ResolveDNSAddr(ptr);
+				if (addr == TSystem::InvalidAddress) {
+					addr = TSystem::ResolveDNSAddr(ptr);
 
-					if (addr == TPolicy::InvalidAddress) {
+					if (addr == TSystem::InvalidAddress) {
 						return false;
 					}
 				}
 
-				return TPolicy::Connect(raw_, addr, port);
+				return TSystem::Connect(raw_, addr, port);
 			}
 
-			inline socket accept() const {
-				return socket(TPolicy::Accept(raw_));
+			inline socket accept() {
+				return socket(TSystem::Accept(raw_));
 			}
 
 			size_t send(cdata_t data, size_t length) {
 				const char * ptr = static_cast<const char *>(data);
-				return TPolicy::Send(raw_, ptr, length);
+				return TSystem::Send(raw_, ptr, length);
 			}
 
 			size_t receive(data_t data, size_t length) {
 				char * ptr = static_cast<char *>(data);
-				return TPolicy::Receive(raw_, ptr, length);
+				return TSystem::Receive(raw_, ptr, length);
 			}
 
 		private:

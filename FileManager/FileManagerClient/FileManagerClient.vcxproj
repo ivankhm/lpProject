@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7D92C027-63CB-4D69-95A7-317828402994}</ProjectGuid>
-    <RootNamespace>FileManager</RootNamespace>
+    <ProjectGuid>{0D112BCE-6B57-435E-9283-7B679F485178}</ProjectGuid>
+    <RootNamespace>FileManagerClient</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -110,17 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ControlConnection.cpp" />
-    <ClCompile Include="Server.cpp" />
     <ClCompile Include="Source.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ControlConnection.h" />
-    <ClInclude Include="NonCopyable.h" />
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="Socket.h" />
-    <ClInclude Include="UnixAPI.h" />
-    <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

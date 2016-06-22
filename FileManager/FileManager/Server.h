@@ -1,9 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-
 #include <vector>
-#include "Socket.h"
 #include "ControlConnection.h"
 
 namespace ftp {
@@ -11,25 +9,31 @@ namespace ftp {
 	class server 
 	{
 	public:
+		typedef socket::port_t port_t;
 		typedef std::vector<control_connection> connections_t;
 
-		server() {
-			connections_.reserve(10);
-		}
+		server() { }
 
 		void run (port_t port) {
+			std::cout << "Server: Startup\n";
+
 			socket_.bind(port);
 			socket_.listen(CONNECTION_COUNT);
+
+			std::cout << "Server: Acceptiong connections\n";
+			while (is_running()) {
+				control_connection & conn = accept_connection();
+
+				std::cout << "Server: Client connected\n";
+				conn.action();
+
+				break;
+			}
 		}
 
 		void stop () {
-			socket_.close();
+			socket_.shutdown();
 			connections_.clear();
-		}
-
-		control_connection & accept_connection() {
-			connections_.emplace_back(socket_.accept());
-			return connections_.back();
 		}
 
 		inline port_t port() const {
@@ -45,6 +49,12 @@ namespace ftp {
 		socket socket_;
 		connections_t connections_;
 
+		control_connection & accept_connection() {
+			connections_.push_back(
+				control_connection(socket_.accept(), *this)
+			);
+			return connections_.back();
+		}
 
 		static const int CONNECTION_COUNT = 5;
 	};
