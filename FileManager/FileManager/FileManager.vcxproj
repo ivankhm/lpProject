@@ -114,10 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseSocket.h" />
+    <ClInclude Include="ControlConnection.h" />
     <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="Socket.h" />
-    <ClInclude Include="UnixSocket.h" />
-    <ClInclude Include="WindowsSocket.h" />
+    <ClInclude Include="UnixAPI.h" />
+    <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

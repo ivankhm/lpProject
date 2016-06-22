@@ -29,10 +29,16 @@
     <ClInclude Include="NonCopyable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsSocket.h">
+    <ClInclude Include="ControlConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UnixSocket.h">
+    <ClInclude Include="Server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnixAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

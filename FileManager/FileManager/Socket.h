@@ -10,73 +10,102 @@
 
 #include "BaseSocket.h"
 #ifdef WINDOWS_OS
-#include "WindowsSocket.h"
+#include "WindowsAPI.h"
 #endif
 
 #ifdef UNIX_OS 
-#include "UnixSocket.h"
+#include "UnixAPI.h"
 #endif
 
 namespace ftp {
+	
+	typedef void * data_t;
+	typedef const void * cdata_t;
+
 	namespace _internal {
-		template <class TSocket>
-		class socket :
-			public base_socket
+		template <class TPolicy>
+		class socket 
 		{
 		public:
-			socket() :
-				impl_(new TSocket()) { }
+			typedef typename TPolicy::socket_t socket_t;
+			typedef typename TPolicy::port_t port_t;
+			typedef typename TPolicy::addr_t addr_t;
 
-			socket(base_socket * impl) :
-				impl_(static_cast<TSocket*>(impl)) { }
+			socket() :
+				raw_(TPolicy::InvalidSocket) 
+			{
+				raw_ = TPolicy::CreateSocket();
+			}
 
 			~socket() {
-				delete impl_;
+				close();
 			}
 
-			inline bool is_opened() {
-				return impl_ != nullptr && impl_->is_opened();
+			inline bool is_opened() const {
+				return raw_ != TPolicy::InvalidSocket;
 			}
 
-			inline void close() {
-				impl_->close();
+			void close() {
+				if (is_opened()) {
+					shutdown();
+				}
+				TPolicy::CloseSocket(raw_);
+			}
+
+			inline void shutdown() {
+				TPolicy::Shutdown(raw_);
 			}
 
 			inline bool bind(port_t port) {
-				return impl_->bind(port);
+				return TPolicy::Bind(raw_, port);
 			}
 
 			inline bool listen(size_t count) {
-				return impl_->listen(count);
+				return TPolicy::Listen(raw_, count);
 			}
 
-			inline bool connect(const char * addr, port_t port) {
-				return impl_->connect(addr, port);
+			bool connect(const char * ptr, port_t port) {
+				addr_t addr = TPolicy::ResolveInetAddr(ptr);
+
+				if (addr == TPolicy::InvalidAddress) {
+					addr = TPolicy::ResolveDNSAddr(ptr);
+
+					if (addr == TPolicy::InvalidAddress) {
+						return false;
+					}
+				}
+
+				return TPolicy::Connect(raw_, addr, port);
 			}
 
-			inline base_socket * accept() {
-				return impl_->accept();
+			inline socket accept() const {
+				return socket(TPolicy::Accept(raw_));
 			}
 
-			inline size_t send(cdata_t data, size_t length) {
-				return impl_->send(data, length);
+			size_t send(cdata_t data, size_t length) {
+				const char * ptr = static_cast<const char *>(data);
+				return TPolicy::Send(raw_, ptr, length);
 			}
 
-			inline size_t receive(data_t data, size_t length) {
-				return impl_->receive(data, length);
+			size_t receive(data_t data, size_t length) {
+				char * ptr = static_cast<char *>(data);
+				return TPolicy::Receive(raw_, ptr, length);
 			}
 
 		private:
-			TSocket * impl_;
+			socket_t raw_;
+
+			socket(socket_t raw) : 
+				raw_(raw) { }
 		};
 	}
 
 #ifdef WINDOWS_OS
-	typedef _internal::socket<windows_socket> socket;
+	typedef _internal::socket<windows_api> socket;
 #endif
 
 #ifdef UNIX_OS 
-	typedef _internal::socket<unix_socket> socket;
+	typedef _internal::socket<unix_api> socket;
 #endif
 
 }

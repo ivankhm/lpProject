@@ -11,21 +11,24 @@ namespace ftp {
 	class server 
 	{
 	public:
-		server() : is_running_(false) { }
+		typedef std::vector<control_connection> connections_t;
+
+		server() {
+			connections_.reserve(10);
+		}
 
 		void run (port_t port) {
-			if(socket_.bind(port)) {
-				is_running_ = socket_.listen(CONNECTION_COUNT);
-			}
+			socket_.bind(port);
+			socket_.listen(CONNECTION_COUNT);
 		}
 
 		void stop () {
 			socket_.close();
-			is_running_ = false;
+			connections_.clear();
 		}
 
 		control_connection & accept_connection() {
-			connections_.emplace_back(socket_);
+			connections_.emplace_back(socket_.accept());
 			return connections_.back();
 		}
 
@@ -34,14 +37,13 @@ namespace ftp {
 		}
 
 		inline bool is_running() const {
-			return is_running_;
+			return socket_.is_opened();
 		}
 
 	private:
-		socket socket_;
 		port_t port_;
-		bool is_running_;
-		std::vector<control_connection> connections_;
+		socket socket_;
+		connections_t connections_;
 
 
 		static const int CONNECTION_COUNT = 5;
