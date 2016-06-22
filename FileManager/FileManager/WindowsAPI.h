@@ -55,7 +55,7 @@ namespace ftp {
 			return ::inet_addr(ptr);
 		}
 		static addr_t ResolveDNSAddr(const char * ptr) {
-			hostent * p_host = ::gethostbyaddr(ptr, 4, PF_INET);
+			LPHOSTENT p_host = ::gethostbyaddr(ptr, 4, PF_INET);
 
 			if (p_host && p_host->h_addr_list) {
 				return ::inet_addr(p_host->h_addr_list[0]);
@@ -65,7 +65,7 @@ namespace ftp {
 			return InvalidAddress;
 		}
 		static bool Connect(socket_t socket, addr_t addr, port_t port) {
-			sockaddr_in s_in;
+			SOCKADDR_IN s_in;
 			s_in.sin_family = PF_INET;
 			s_in.sin_addr.S_un.S_addr = addr;
 			s_in.sin_port = ::htons(port);
@@ -73,7 +73,7 @@ namespace ftp {
 			return ::connect(socket, (LPSOCKADDR)&s_in, sizeof(s_in)) == 0;
 		}
 		static socket_t Accept(socket_t socket) {
-			sockaddr_in s_in;
+			SOCKADDR_IN s_in;
 			int length = sizeof(sockaddr);
 
 			return ::accept(socket, (LPSOCKADDR)&s_in, &length);
