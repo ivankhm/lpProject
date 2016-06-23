@@ -2,19 +2,19 @@
 
 namespace ftp {
 	void control_connection::start_processing_loop() {
-		working_ = true;
+		working_.store(true);
 		thread_ = std::thread { &control_connection::processing_loop, this };
 	}
 
 	void control_connection::stop_processing_loop() {
-		working_ = false;
+		working_.store(false);
 	}
 
 	void control_connection::processing_loop() {
 		buffer_t buffer{ 0 };
 		size_t null_count = 0;
 
-		while (working_) 
+		while (is_working()) 
 		{
 			size_t received = socket_.receive(
 				buffer.data(), buffer.size()
@@ -24,10 +24,13 @@ namespace ftp {
 				++null_count;
 			}
 
-			if (received == socket::InvalidBytesCount || null_count > 3) {
+			if (received == socket::InvalidBytesCount || 
+				null_count > MaxEmptyCount) 
+			{
 				stop_processing_loop();
 			}
-			else {
+			else 
+			{
 				process_command(buffer, received);
 			}
 		}
