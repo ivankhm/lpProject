@@ -11,7 +11,7 @@ namespace ftp {
 	}
 
 	void control_connection::processing_loop() {
-		buffer_t buffer{ 0 };
+		buffer_t buffer { };
 		size_t null_count = 0;
 
 		while (is_working()) 
