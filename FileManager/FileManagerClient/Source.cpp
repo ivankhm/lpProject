@@ -19,15 +19,14 @@ int main(int argc, char * argv[])
 	char buff[100] = { 0 };
 
 	cin.getline(buff, 100);
-	size_t count = s.send(buff, cin.gcount());
-
+	s.send(buff, cin.gcount());
 	size_t received = s.receive(buff, 100);
-	buff[received] = 0;
-
-	cout
-		<< "Client: Received message:\n"
-		<< buff
-		<< "\n";
-
+	
+	if (received != ftp::socket::InvalidBytesCount && received < 100) 
+	{
+		buff[received] = 0;
+		cout << "Client: Received message:\n" << buff << "\n";
+	}
+	
 	std::getchar();
 }

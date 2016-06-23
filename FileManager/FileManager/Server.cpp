@@ -8,15 +8,10 @@ namespace ftp {
 		listen_.listen(CONNECTION_COUNT);
 
 		std::cout << "Server: Accepting connections\n";
-		while (is_running()) {
+		while (is_running()) 
+		{
 			accept_connection()
-				.action();
-
-			std::cout 
-				<< "Server: Client action complited\n"
-				<< "Delete connection\n";
-			
-			connections_.pop_back();
+				.start_processing_loop();
 		}
 	}
 

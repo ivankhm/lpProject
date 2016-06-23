@@ -85,7 +85,7 @@ namespace ftp {
 				return TSystem::Connect(raw_, addr, port);
 			}
 
-			inline socket accept() {
+			inline socket accept() const {
 				return socket(TSystem::Accept(raw_));
 			}
 
@@ -98,6 +98,8 @@ namespace ftp {
 				char * ptr = static_cast<char *>(data);
 				return TSystem::Receive(raw_, ptr, length);
 			}
+
+			static const size_t InvalidBytesCount = size_t(-1);
 
 		private:
 			socket_t raw_;

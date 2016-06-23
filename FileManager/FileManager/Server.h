@@ -13,7 +13,7 @@ namespace ftp {
 		typedef std::vector<control_connection> connections_t;
 
 		server() {
-
+			stop();
 		}
 
 		void run(port_t port);
