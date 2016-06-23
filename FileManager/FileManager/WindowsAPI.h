@@ -18,10 +18,6 @@ namespace ftp {
 				::WSACleanup();
 			}
 		};
-
-		void init() {
-			static ws_initializer i;
-		}
 	}
 
 	struct windows_api
@@ -31,7 +27,7 @@ namespace ftp {
 		typedef unsigned long addr_t;
 		
 		static socket_t CreateSocket() {
-			_wsinternal::init();
+			static _wsinternal::ws_initializer i;
 			return ::socket(PF_INET, SOCK_STREAM, 0);
 		}
 		static void CloseSocket(socket_t socket) {

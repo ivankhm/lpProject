@@ -8,6 +8,7 @@
 #define UNIX_OS
 #endif
 
+#include "NonCopyable.h"
 #ifdef WINDOWS_OS
 #include "WindowsAPI.h"
 #endif
@@ -23,7 +24,8 @@ namespace ftp {
 
 	namespace _internal {
 		template <class TSystem>
-		class socket 
+		class socket :
+			public utills::non_copyable
 		{
 		public:
 			typedef typename TSystem::socket_t socket_t;
@@ -34,6 +36,12 @@ namespace ftp {
 				raw_(TSystem::InvalidSocket) 
 			{
 				raw_ = TSystem::CreateSocket();
+			}
+
+			socket(socket && rhs) : 
+				raw_(rhs.raw_) 
+			{
+				rhs.raw_ = TSystem::InvalidSocket;
 			}
 
 			~socket() {
@@ -47,8 +55,8 @@ namespace ftp {
 			void close() {
 				if (is_opened()) {
 					shutdown();
+					TSystem::CloseSocket(raw_);
 				}
-				TSystem::CloseSocket(raw_);
 			}
 
 			inline void shutdown() {
@@ -81,12 +89,12 @@ namespace ftp {
 				return socket(TSystem::Accept(raw_));
 			}
 
-			size_t send(cdata_t data, size_t length) {
+			inline size_t send(cdata_t data, size_t length) const {
 				const char * ptr = static_cast<const char *>(data);
 				return TSystem::Send(raw_, ptr, length);
 			}
 
-			size_t receive(data_t data, size_t length) {
+			inline size_t receive(data_t data, size_t length) const {
 				char * ptr = static_cast<char *>(data);
 				return TSystem::Receive(raw_, ptr, length);
 			}

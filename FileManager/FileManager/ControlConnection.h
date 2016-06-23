@@ -1,6 +1,7 @@
 #ifndef CONTROL_CONNECTION_H
 #define CONTROL_CONNECTION_H
 
+#include <iostream>
 #include "Socket.h"
 
 namespace ftp {
@@ -9,26 +10,17 @@ namespace ftp {
 	class control_connection 
 	{
 	public:
-		control_connection(const socket & sock, server & srv) : 
-			socket_(sock), srv_(srv) { }
+		control_connection(socket sock, server & srv) : 
+			socket_(std::move(sock)), srv_(srv) { }
+
+		control_connection(control_connection && rhs) : 
+			socket_(std::move(rhs.socket_)), srv_(rhs.srv_) { }
 
 		~control_connection() {
 
 		}
 
-		void action() {
-			char buff[100] = { 0 };
-
-			size_t received = socket_.receive(buff, 100);
-
-			std::cout 
-				<< "Server: Received message\n" 
-				<< "Count: " << received << "\n"
-				<< "Error: " << WSAGetLastError() << "\n"
-				<< buff << std::endl;
-
-			socket_.send(buff, received);
-		}
+		void action();
 
 	private:
 		socket socket_;
