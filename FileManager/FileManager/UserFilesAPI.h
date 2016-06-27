@@ -11,10 +11,13 @@ namespace ftp {
 	public:
 		typedef std::unordered_map<std::string, std::string> record_t;
 
-		data_storage(const std::string & password) : 
-			password_(password), files_() { }
-
 		data_storage() { }
+
+		data_storage(const std::string & password) : 
+			password_(password) { }
+
+		data_storage(const std::string & password, record_t && files) : 
+			password_(password), files_(std::move(files)) { }
 
 		~data_storage() { }
 
@@ -27,14 +30,6 @@ namespace ftp {
 		}
 
 	private:
-
-		inline static std::string first_cut (const std::string & x) {
-			return std::string(x.begin(), x.begin() + x.find(' '));
-		}
-
-		inline static std::string last_cut (const std::string & x) {
-			return std::string(x.begin() + x.find(' ') + 1, x.end());
-		}
 
 		std::string password_;
 		record_t files_;
@@ -64,7 +59,17 @@ namespace ftp {
 		}
 
 	private:
+
+		inline std::string cut_number (const std::string src, size_t position = 0) {
+			return position == 0 ? 
+				std::string(src.begin(), src.begin() + src.find(' ')) :
+				std::string(src.begin() + src.find(' ') + position, src.end());
+		}
+
 		data_t data_;
+
+		static const std::string DataFilename;
+		static const std::string BaseLocation;
 	};
 }
 
