@@ -19,13 +19,13 @@ namespace ftp {
 		{
 			std::getline(file, user_line);
 
-			size_t count = std::stoi(cut_number(user_line, 3));
+			size_t count = std::stoi(cut_number(user_line));
 
 			data_storage::record_t records;
 
 			for (size_t i = 0; i != count; ++i) {
 				std::getline(file, file_line);
-				records[cut_number(file_line,1)] = cut_number(file_line, 0);
+				records[cut_number(file_line,1)] = cut_number(file_line);
 			}
 
 			data_[cut_number(user_line,1)] = data_storage(
