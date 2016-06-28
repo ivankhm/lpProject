@@ -38,7 +38,16 @@ namespace ftp {
 
 	data_map::~data_map()
 	{
-	
+		std::ofstream file(BaseLocation + DataFilename);
+
+		for (auto &r : data_)
+		{
+			file << r.first << " " << r.second.password() << " " << r.second.files().size() << std::endl;
+			for (auto &x : r.second.files())
+			{
+				file << x.first << " " << x.second << std::endl;
+			}
+		}
 	}
 
 	data_map::files_t data_map::user_files (const std::string & login)
