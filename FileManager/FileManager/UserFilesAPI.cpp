@@ -20,7 +20,7 @@ namespace ftp {
 			std::getline(file, user_line);
 
 			size_t count = std::stoi(
-				cut_number(user_line, 2)
+				cut_number(cut_number(user_line, 1),1)
 			);
 
 			data_storage::record_t records;
@@ -31,7 +31,7 @@ namespace ftp {
 			}
 
 			data_[cut_number(user_line)] = data_storage(
-				cut_number(user_line, 1), std::move(records)
+				cut_number(cut_number(user_line, 1)), std::move(records)
 			);
 		}
 	}
