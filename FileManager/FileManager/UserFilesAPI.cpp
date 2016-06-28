@@ -15,24 +15,22 @@ namespace ftp {
 
 		std::ifstream file(BaseLocation + DataFilename);
 
-		while(!file.eof()) 
+		while (!file.eof())
 		{
 			std::getline(file, user_line);
 
-			size_t count = std::stoi(
-				cut_number(cut_number(user_line, 1),1)
-			);
+			size_t count = std::stoi(cut_number(user_line, 3));
 
 			data_storage::record_t records;
 
-			for(size_t i = 0; i != count; ++i) {
+			for (size_t i = 0; i != count; ++i) {
 				std::getline(file, file_line);
-				records[cut_number(file_line)] = cut_number(file_line, 1);
+				records[cut_number(file_line,1)] = cut_number(file_line, 0);
 			}
 
-			data_[cut_number(user_line)] = data_storage(
-				cut_number(cut_number(user_line, 1)), std::move(records)
-			);
+			data_[cut_number(user_line,1)] = data_storage(
+				cut_number(user_line, 2), std::move(records)
+				);
 		}
 	}
 

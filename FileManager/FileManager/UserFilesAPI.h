@@ -60,10 +60,13 @@ namespace ftp {
 
 	private:
 
-		inline std::string cut_number (const std::string src, size_t position = 0) {
-			return position == 0 ? 
-				std::string(src.begin(), src.begin() + src.find(' ')) :
-				std::string(src.begin() + src.find(' ') + position, src.end());
+		inline std::string cut_number(const std::string src, size_t position = 1) {
+			return position == 0 ?
+				std::string(src.begin() + src.find(' '), src.end()) : position == 1 ?
+				std::string(src.begin(), src.begin() + src.find(' ')) : position == 2 ?
+				std::string(src.begin() + src.find(' ') + 1, src.begin() + src.find_last_of(' ')) :
+				std::string(src.begin() + src.find_last_of(' ') + 1, src.end())
+				;
 		}
 
 		data_t data_;

@@ -3,8 +3,8 @@
 
 int main(int argc, char * argv[])
 {
-	//ftp::server srv;
-	//srv.run(1035);
+	ftp::server srv;
+	srv.run(1035);
 
 	ftp::data_map map;
 
