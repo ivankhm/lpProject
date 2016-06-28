@@ -40,6 +40,18 @@ namespace ftp {
 		if (std::strcmp(buffer.data(), "QUIT") == 0) {
 			stop_processing_loop();
 		}
+		if (std::strcmp(buffer.data(), "PASV") == 0) {
+			srv_.get_avalible_ports();
+		}
+
+		if (std::strcmp(buffer.data(), "LIST") == 0) {
+			data_conection t_c(srv_.port());
+			t_c.List();
+		}
+		if (std::strstr(buffer.data(), "NAME") == buffer.data()) {
+			data_conection t_c(srv_.port());
+			
+		}
 
 		socket_.send(buffer.data(), size);
 	}

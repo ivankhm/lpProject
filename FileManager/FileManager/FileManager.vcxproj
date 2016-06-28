@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControlConnection.h" />
+    <ClInclude Include="DataConection.h" />
     <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Socket.h" />

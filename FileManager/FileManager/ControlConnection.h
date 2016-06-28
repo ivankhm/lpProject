@@ -6,9 +6,10 @@
 #include <iostream>
 #include <thread>
 #include "Socket.h"
-
+#include "DataConection.h"
+#include "Server.h"
 namespace ftp {
-	class server;
+	//class server;
 
 	class control_connection 
 	{
