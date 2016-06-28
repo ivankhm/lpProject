@@ -1,6 +1,31 @@
 #include "ControlConnection.h"
 
 namespace ftp {
+	control_connection::control_connection(socket sock, server & srv, port_t dataport) : 
+		socket_(std::move(sock)), 
+		datac_(dataport), 
+		working_(false), 
+		srv_(srv) 
+	{ }
+
+	control_connection::control_connection(control_connection && rhs) : 
+		socket_(std::move(rhs.socket_)), 
+		thread_(std::move(rhs.thread_)), 
+		datac_(std::move(rhs.datac_)), 
+		working_(rhs.working_.load()), 
+		srv_(rhs.srv_)
+	{ }
+
+	control_connection::~control_connection() {
+		if (is_working()) {
+			stop_processing_loop();
+		}
+		if (thread_.joinable()) {
+			thread_.join();
+		}	
+	}
+
+
 	void control_connection::start_processing_loop() {
 		working_.store(true);
 		thread_ = std::thread { &control_connection::processing_loop, this };
@@ -12,7 +37,7 @@ namespace ftp {
 
 	void control_connection::processing_loop() {
 		buffer_t buffer { };
-		size_t null_count = 0;
+		size_t empty_count = 0;
 
 		while (is_working()) 
 		{
@@ -21,11 +46,11 @@ namespace ftp {
 			);
 
 			if (received == size_t(0)) {
-				++null_count;
+				++empty_count;
 			}
 
-			if (received == socket::InvalidBytesCount || 
-				null_count > MaxEmptyCount) 
+			if ((received == socket::InvalidBytesCount) || 
+				(empty_count > MaxEmptyCount)) 
 			{
 				stop_processing_loop();
 			}
@@ -41,16 +66,20 @@ namespace ftp {
 			stop_processing_loop();
 		}
 		if (std::strcmp(buffer.data(), "PASV") == 0) {
-			srv_.get_avalible_ports();
+			datac_.reopen();
+			// return ip && port!!
 		}
 
-		if (std::strcmp(buffer.data(), "LIST") == 0) {
-			data_conection t_c(srv_.port());
-			t_c.List();
+		if (std::strcmp(buffer.data(), "LIST") == 0) 
+		{
+			if (datac_.is_opened()) 
+			{
+				//
+			}
 		}
+
 		if (std::strstr(buffer.data(), "NAME") == buffer.data()) {
-			data_conection t_c(srv_.port());
-			
+
 		}
 
 		socket_.send(buffer.data(), size);

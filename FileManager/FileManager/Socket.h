@@ -48,6 +48,16 @@ namespace ftp {
 				close();
 			}
 
+			socket & operator= (socket && rhs) 
+			{
+				if (this != &rhs) 
+				{
+					raw_ = rhs.raw_;
+					rhs.raw_ = TSystem::InvalidSocket;
+				}
+				return *this;
+			}
+
 			inline bool is_opened() const {
 				return raw_ != TSystem::InvalidSocket;
 			}

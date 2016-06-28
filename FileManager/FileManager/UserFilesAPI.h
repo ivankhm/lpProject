@@ -55,7 +55,7 @@ namespace ftp {
 		}
 
 		inline void register_user (const std::string & login, const std::string & password) {
-			data_[login] = data_storage(password);
+			data_[login] = data_storage(password, data_storage::record_t()); 
 		}
 
 	private:

@@ -5,37 +5,30 @@
 #include <atomic>
 #include <iostream>
 #include <thread>
-#include "Socket.h"
-#include "DataConection.h"
-#include "Server.h"
+
+#include "DataConnection.h"
+
 namespace ftp {
-	//class server;
+	class server;
 
 	class control_connection 
 	{
 	public:
-		control_connection(socket sock, server & srv) : 
-			socket_(std::move(sock)), thread_(), working_(false), srv_(srv) { }
+		typedef socket::port_t port_t;
 
-		control_connection(control_connection && rhs) : 
-			socket_(std::move(rhs.socket_)), thread_(std::move(rhs.thread_)), 
-			working_(rhs.working_.load()), srv_(rhs.srv_) { }
-
-		~control_connection() 
-		{
-			if (is_working()) {
-				stop_processing_loop();
-			}
-			if (thread_.joinable()) {
-				thread_.join();
-			}
-		}
+		control_connection(socket sock, server & srv, port_t dataport);
+		control_connection(control_connection && rhs);
+		~control_connection();
 
 		void start_processing_loop();
 		void stop_processing_loop();
 
 		inline bool is_working() const {
 			return working_.load();
+		}
+
+		inline data_conection::port_t dataport() const {
+			return datac_.port();
 		}
 
 	private:
@@ -48,6 +41,7 @@ namespace ftp {
 
 		socket socket_;
 		thread_t thread_;
+		data_conection datac_;
 		bool_t working_;
 		server & srv_;
 
