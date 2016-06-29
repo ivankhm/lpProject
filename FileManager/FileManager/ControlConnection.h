@@ -10,7 +10,7 @@
 
 namespace ftp {
 	class server;
-
+		
 	class control_connection 
 	{
 	public:
@@ -30,6 +30,7 @@ namespace ftp {
 		inline data_conection::port_t dataport() const {
 			return datac_.port();
 		}
+		void send_ip_port();
 
 	private:
 		typedef std::array<char, 256> buffer_t;
@@ -38,7 +39,7 @@ namespace ftp {
 
 		void processing_loop();
 		void process_command(const buffer_t & cmd, size_t size);
-
+		
 		socket socket_;
 		thread_t thread_;
 		data_conection datac_;

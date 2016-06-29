@@ -84,6 +84,7 @@ namespace ftp {
 		static const socket_t InvalidSocket = socket_t(-1);
 		static const addr_t InvalidAddress = addr_t(-1);
 	};
+
 }
 
 #endif

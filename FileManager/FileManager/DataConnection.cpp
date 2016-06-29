@@ -1,6 +1,7 @@
 #include "DataConnection.h"
 #include <fstream>
 
+
 namespace ftp {
 
 	void data_conection::reopen() {
@@ -10,6 +11,8 @@ namespace ftp {
 			socket_.bind(port_);
 		}
 	}
+
+	
 
 	void data_conection::send_files(const files_t & files) {
 
@@ -35,4 +38,6 @@ namespace ftp {
 		}
 	}
 
+	
+	
 }

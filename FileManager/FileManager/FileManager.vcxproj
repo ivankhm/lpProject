@@ -111,16 +111,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ControlConnection.cpp" />
+    <ClCompile Include="DataConnection.cpp" />
+    <ClCompile Include="GetIp.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="UserFilesAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControlConnection.h" />
-    <ClInclude Include="DataConection.h" />
+    <ClInclude Include="DataConnection.h" />
+    <ClInclude Include="GetIp.h" />
     <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="UnixAPI.h" />
+    <ClInclude Include="UserFilesAPI.h" />
     <ClInclude Include="WindowsAPI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

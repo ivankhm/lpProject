@@ -1,4 +1,5 @@
 #include "ControlConnection.h"
+#include "GetIp.h"
 
 namespace ftp {
 	control_connection::control_connection(socket sock, server & srv, port_t dataport) : 
@@ -35,6 +36,20 @@ namespace ftp {
 		working_.store(false);
 	}
 
+	void control_connection::send_ip_port()
+	{
+		unsigned long ip = get_ip();
+		char buf[6] = {
+			(ip >> 24) & 255
+			, (ip >> 16) & 255
+			, (ip >> 8) & 255
+			, (ip) & 255
+			, (datac_.port() >> 8)&255
+			, datac_.port()&255
+		};
+		socket_.send(buf, 6);
+	}
+
 	void control_connection::processing_loop() {
 		buffer_t buffer { };
 		size_t empty_count = 0;
@@ -68,6 +83,7 @@ namespace ftp {
 		if (std::strcmp(buffer.data(), "PASV") == 0) {
 			datac_.reopen();
 			// return ip && port!!
+			send_ip_port();
 		}
 
 		if (std::strcmp(buffer.data(), "LIST") == 0) 
@@ -75,6 +91,7 @@ namespace ftp {
 			if (datac_.is_opened()) 
 			{
 				//
+
 			}
 		}
 

@@ -24,6 +24,15 @@
     <ClCompile Include="ControlConnection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UserFilesAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataConnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GetIp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Socket.h">
@@ -44,7 +53,13 @@
     <ClInclude Include="UnixAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataConection.h">
+    <ClInclude Include="DataConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserFilesAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetIp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
