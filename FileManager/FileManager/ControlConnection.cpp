@@ -1,5 +1,6 @@
 #include "ControlConnection.h"
 #include "GetIp.h"
+#include "Server.h"
 
 namespace ftp {
 	control_connection::control_connection(socket sock, server & srv, port_t dataport) : 
@@ -86,17 +87,22 @@ namespace ftp {
 			send_ip_port();
 		}
 
-		if (std::strcmp(buffer.data(), "LIST") == 0) 
+		if (std::strcmp(buffer.data(), "LIST") == 0)
 		{
-			if (datac_.is_opened()) 
+			if (datac_.is_opened())
 			{
-				//
-
+				srv_.get_list(srv_.get_login());
 			}
 		}
 
-		if (std::strstr(buffer.data(), "NAME") == buffer.data()) {
+		if (std::strstr(buffer.data(), "RECV") == buffer.data()) {
+			srv_.new_file(srv_.get_login(), cut_number(buffer.data(), 1));
+			datac_.save_file(cut_number(buffer.data(), 1));
+		}
 
+		if (std::strstr(buffer.data(), "STOR") == buffer.data()) {
+			srv_.get_filename(srv_.get_login(), cut_number(buffer.data(), 1));
+			datac_.send_file(cut_number(buffer.data(), 1));
 		}
 
 		socket_.send(buffer.data(), size);

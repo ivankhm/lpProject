@@ -33,6 +33,13 @@ namespace ftp {
 		void send_ip_port();
 
 	private:
+		inline std::string cut_number(const std::string src, size_t position = 0) {
+			return position == 1 ?
+				std::string(src.begin(), src.begin() + src.find(' ')) : position == 2 ?
+				std::string(src.begin() + src.find(' ') + 1, src.begin() + src.find_last_of(' ')) :
+				std::string(src.begin() + src.find_last_of(' ') + 1, src.end());
+		}
+
 		typedef std::array<char, 256> buffer_t;
 		typedef std::atomic<bool> bool_t;
 		typedef std::thread thread_t;
