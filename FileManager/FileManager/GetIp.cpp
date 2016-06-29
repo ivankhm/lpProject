@@ -7,7 +7,6 @@
 
 namespace ftp {
 	unsigned long get_ip() {
-		static _wsinternal::ws_initializer i;
 		char buf[80];
 		::gethostname(buf, 80);
 		
