@@ -96,13 +96,13 @@ namespace ftp {
 		}
 
 		if (std::strstr(buffer.data(), "RECV") == buffer.data()) {
-			srv_.new_file(srv_.get_login(), cut_number(buffer.data(), 1));
-			datac_.save_file(cut_number(buffer.data(), 1));
+			srv_.new_file(srv_.get_login(), cut_number(buffer.data(), 2));
+			datac_.save_file(cut_number(buffer.data(), 2));
 		}
 
 		if (std::strstr(buffer.data(), "STOR") == buffer.data()) {
-			srv_.get_filename(srv_.get_login(), cut_number(buffer.data(), 1));
-			datac_.send_file(cut_number(buffer.data(), 1));
+			srv_.get_filename(srv_.get_login(), cut_number(buffer.data(), 2));
+			datac_.send_file(cut_number(buffer.data(), 2));
 		}
 
 		socket_.send(buffer.data(), size);
