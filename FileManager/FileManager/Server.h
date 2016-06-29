@@ -37,8 +37,8 @@ namespace ftp {
 			return map_.file_path(login, filename);
 		}
 
-		inline void get_list(std::string &login){
-			map_.user_files(login);
+		inline data_map::files_t get_list(std::string &login){
+			return map_.user_files(login);
 		}
 
 		inline std::string get_filename(std::string &login, std::string &file){

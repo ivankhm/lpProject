@@ -91,7 +91,7 @@ namespace ftp {
 		{
 			if (datac_.is_opened())
 			{
-				srv_.get_list(srv_.get_login());
+				datac_.send_files(srv_.get_list(srv_.get_login()));
 			}
 		}
 

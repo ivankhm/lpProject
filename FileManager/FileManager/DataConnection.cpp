@@ -15,7 +15,10 @@ namespace ftp {
 	
 
 	void data_conection::send_files(const files_t & files) {
-
+		for (auto &i : files) {
+			socket_.send(i.data(), i.length());
+		}
+		close();
 	}
 		
 	void data_conection::send_file(const std::string & filename)
@@ -26,6 +29,7 @@ namespace ftp {
 			fin.getline(buf.data(), buf.size());
 			socket_.send(buf.data(), 1024);
 		}
+		close();
 	}
 		
 	void data_conection::save_file(const std::string & filename) 
@@ -36,6 +40,7 @@ namespace ftp {
 			socket_.receive(buf.data(), buf.size());
 			fout << buf.data();
 		}
+		close();
 	}
 
 	
