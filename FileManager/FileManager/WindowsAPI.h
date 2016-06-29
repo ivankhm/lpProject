@@ -56,7 +56,7 @@ namespace ftp {
 			if (p_host && p_host->h_addr_list) {
 				return ::inet_addr(p_host->h_addr_list[0]);
 			}
-			delete p_host;
+			//delete p_host; убито 
 
 			return InvalidAddress;
 		}
