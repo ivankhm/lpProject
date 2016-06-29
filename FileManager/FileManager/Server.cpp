@@ -6,8 +6,11 @@ namespace ftp {
 
 	server::server() : 
 		port_(-1), 
-		dataport_(ReservedDataport)
-	{ }
+		dataport_(ReservedDataport),
+		login("log"), passw("pas")
+	{ 
+		map_.register_user(login, passw);
+	}
 
 	void server::run(port_t port) {
 		std::cout << "Server: Startup\n";
