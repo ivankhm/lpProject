@@ -44,8 +44,8 @@ namespace ftp {
 		resp_t invalid_command(const buffer_t & arg);
 		resp_t close_control(const buffer_t & arg);
 		resp_t open_data(const buffer_t & arg);
-		resp_t login(const buffer_t arg);
-		resp_t password(const buffer_t arg);
+		resp_t login(const buffer_t & arg);
+		resp_t password(const buffer_t & arg);
 		resp_t list(const buffer_t & arg);
 		resp_t send_file(const buffer_t & arg);
 		resp_t recv_file(const buffer_t & arg);

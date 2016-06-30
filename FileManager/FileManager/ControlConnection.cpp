@@ -70,10 +70,10 @@ namespace ftp {
 			handler = &control_connection::close_control;
 		}
 		if (std::strstr(buffer.data(), "USER") == buffer.data()) {
-
+			handler = &control_connection::login;
 		}
 		if (std::strstr(buffer.data(), "PASS") == buffer.data()) {
-			
+			handler = &control_connection::password;
 		}
 		if (std::strcmp(buffer.data(), "PASV") == 0) {
 			handler = &control_connection::open_data;
@@ -143,7 +143,7 @@ namespace ftp {
 		};
 	}
 
-	control_connection::resp_t control_connection::login(const buffer_t arg) {
+	control_connection::resp_t control_connection::login(const buffer_t & arg) {
 		authorized_ = false;
 
 		std::string login = std::string(
@@ -156,7 +156,7 @@ namespace ftp {
 		return { { "OK: User logged. Need password." }, 32 };
 	}
 
-	control_connection::resp_t control_connection::password(const buffer_t arg) {
+	control_connection::resp_t control_connection::password(const buffer_t & arg) {
 		std::string password = std::string(
 			std::find(arg.begin(), arg.end(), ' '),
 			arg.end()
