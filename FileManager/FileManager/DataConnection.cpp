@@ -1,7 +1,6 @@
 #include "DataConnection.h"
 #include <fstream>
 
-
 namespace ftp {
 
 	void data_conection::reopen() {
@@ -12,37 +11,36 @@ namespace ftp {
 		}
 	}
 
-	
-
 	void data_conection::send_files(const files_t & files) {
-		for (auto &i : files) {
+		for (const std::string &i : files) {
 			socket_.send(i.data(), i.length());
 		}
-		close();
 	}
 		
 	void data_conection::send_file(const std::string & filename)
 	{
+		buffer_t buffer;
 		std::ifstream fin(filename);
-		buffer_t buf;
-		while (!fin.eof()) {
-			fin.getline(buf.data(), buf.size());
-			socket_.send(buf.data(), 1024);
+
+		while (!fin.eof()) 
+		{
+			fin.getline(buffer.data(), buffer.size());
+			socket_.send(buffer.data(), fin.gcount());
 		}
-		close();
 	}
 		
-	void data_conection::save_file(const std::string & filename) 
+	void data_conection::recv_file(const std::string & filename) 
 	{
+		buffer_t buffer;
 		std::ofstream fout(filename);
-		buffer_t buf;
-		while (!fout.eof()) {
-			socket_.receive(buf.data(), buf.size());
-			fout << buf.data();
-		}
-		close();
-	}
 
-	
-	
+		while (!fout.eof()) 
+		{
+			size_t received = socket_.receive(buffer.data(), buffer.size());
+			
+			if (received > 0) {
+				fout.write(buffer.data(), received);
+			}
+		}
+	}
 }

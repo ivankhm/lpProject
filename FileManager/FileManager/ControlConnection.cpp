@@ -1,21 +1,22 @@
 #include "ControlConnection.h"
-#include "GetIp.h"
 #include "Server.h"
 
 namespace ftp {
-	control_connection::control_connection(socket sock, server & srv, port_t dataport) : 
+	control_connection::control_connection(socket && sock, server & srv, port_t dataport) : 
 		socket_(std::move(sock)), 
-		datac_(dataport), 
+		data_(dataport), 
 		working_(false), 
-		srv_(srv) 
+		srv_(srv), 
+		login_(server::DefaultLogin)
 	{ }
 
 	control_connection::control_connection(control_connection && rhs) : 
 		socket_(std::move(rhs.socket_)), 
 		thread_(std::move(rhs.thread_)), 
-		datac_(std::move(rhs.datac_)), 
+		data_(std::move(rhs.data_)), 
 		working_(rhs.working_.load()), 
-		srv_(rhs.srv_)
+		srv_(rhs.srv_),
+		login_(server::DefaultLogin)
 	{ }
 
 	control_connection::~control_connection() {
@@ -27,7 +28,6 @@ namespace ftp {
 		}	
 	}
 
-
 	void control_connection::start_processing_loop() {
 		working_.store(true);
 		thread_ = std::thread { &control_connection::processing_loop, this };
@@ -35,20 +35,6 @@ namespace ftp {
 
 	void control_connection::stop_processing_loop() {
 		working_.store(false);
-	}
-
-	void control_connection::send_ip_port()
-	{
-		unsigned long ip = get_ip();
-		char buf[6] = {
-			(ip >> 24) & 255
-			, (ip >> 16) & 255
-			, (ip >> 8) & 255
-			, (ip) & 255
-			, (datac_.port() >> 8)&255
-			, datac_.port()&255
-		};
-		socket_.send(buf, 6);
 	}
 
 	void control_connection::processing_loop() {
@@ -78,33 +64,175 @@ namespace ftp {
 	}
 
 	void control_connection::process_command(const buffer_t & buffer, size_t size) {
+		handler_t handler = &control_connection::invalid_command;
+
 		if (std::strcmp(buffer.data(), "QUIT") == 0) {
-			stop_processing_loop();
+			handler = &control_connection::close_control;
+		}
+		if (std::strstr(buffer.data(), "USER") == buffer.data()) {
+
+		}
+		if (std::strstr(buffer.data(), "PASS") == buffer.data()) {
+			
 		}
 		if (std::strcmp(buffer.data(), "PASV") == 0) {
-			datac_.reopen();
-			// return ip && port!!
-			send_ip_port();
+			handler = &control_connection::open_data;
 		}
-
-		if (std::strcmp(buffer.data(), "LIST") == 0)
-		{
-			if (datac_.is_opened())
-			{
-				datac_.send_files(srv_.get_list(srv_.get_login()));
-			}
+		if (std::strcmp(buffer.data(), "LIST") == 0) {
+			handler = &control_connection::list;
 		}
-
 		if (std::strstr(buffer.data(), "RECV") == buffer.data()) {
-			srv_.new_file(srv_.get_login(), cut_number(buffer.data(), 2));
-			datac_.save_file(cut_number(buffer.data(), 2));
+			handler = &control_connection::recv_file;
 		}
-
 		if (std::strstr(buffer.data(), "STOR") == buffer.data()) {
-			srv_.get_filename(srv_.get_login(), cut_number(buffer.data(), 2));
-			datac_.send_file(cut_number(buffer.data(), 2));
+			handler = &control_connection::send_file;
 		}
 
-		socket_.send(buffer.data(), size);
+		resp_t responce = (this->*handler)(buffer);
+		socket_.send(responce.first.data(), responce.second);
+	}
+
+	control_connection::resp_t control_connection::invalid_command(const buffer_t & arg) {
+		return {
+			{ "ERROR: Command was invalid." }, 28 
+		};
+	}
+
+	control_connection::resp_t control_connection::close_control(const buffer_t &) {
+		stop_processing_loop();
+
+		return {
+			{ "OK: Closing control connection. Goodbye." }, 41
+		};
+	}
+
+	control_connection::resp_t control_connection::open_data(const buffer_t & ) {
+		data_.reopen();
+
+		socket::addr_t ip = utill::MachineIp();
+		port_t port = data_.port();
+
+		return { 
+			{	
+				(char)(ip >> 24) & 255, (char)(ip >> 16) & 255, (char)(ip >> 8) & 255,
+				(char)ip & 255, (char)(port >> 8) & 255, (char)port & 255
+			}, 6
+		};
+	}
+
+	control_connection::resp_t control_connection::data_access_check(bool & valid) {
+		valid = false;
+
+		if (!data_.is_opened())
+		{
+			return {
+				{ "ERROR: Data connection closed. PASV command must be the first." }, 63
+			};
+		}
+
+		if (!authorized_) {
+			return {
+				{ "ERROR: Neet to be authorized." }, 30
+			};
+		}
+
+		valid = true;
+
+		return {
+			{ "OK: Sending data..." }, 20
+		};
+	}
+
+	control_connection::resp_t control_connection::login(const buffer_t arg) {
+		authorized_ = false;
+
+		std::string login = std::string(
+			std::find(arg.begin(), arg.end(), ' '),
+			arg.end()
+		);
+
+		// Добавить \ авторизовать пользователя
+
+		return { { "OK: User logged. Need password." }, 32 };
+	}
+
+	control_connection::resp_t control_connection::password(const buffer_t arg) {
+		std::string password = std::string(
+			std::find(arg.begin(), arg.end(), ' '),
+			arg.end()
+		);
+
+		// Проверить пароль
+
+		return {
+			{ "OK: Password confirmed. Authorized." }, 36
+		};
+	}
+
+	control_connection::resp_t control_connection::list(const buffer_t & ) {
+		bool check_passed;
+		resp_t responce = data_access_check(check_passed);
+
+		if (check_passed)
+		{
+			socket_.send(responce.first.data(), responce.second);
+
+			data_.send_files(
+				srv_.get_list(login_)
+			);
+
+			return {
+				{ "OK: List of files was send." }, 28
+			};
+		}
+		return responce;
+	}
+
+	control_connection::resp_t control_connection::send_file(const buffer_t & arg) {
+		bool check_passed;
+		resp_t responce = data_access_check(check_passed);
+
+		if (check_passed)
+		{
+			socket_.send(responce.first.data(), responce.second);
+
+			std::string filename = std::string(
+				std::find(arg.begin(), arg.end(), ' '),
+				arg.end()
+			);
+
+			data_.send_file(
+				srv_.get_file(login_, filename)
+			);
+
+			return {
+				{ "OK: File was send." }, 19
+			};
+		}
+		return responce;
+	}
+
+	control_connection::resp_t control_connection::recv_file(const buffer_t & arg) {
+		bool check_passed;
+		resp_t responce = data_access_check(check_passed);
+
+		if (check_passed) 
+		{
+			socket_.send(responce.first.data(), responce.second);
+			
+			std::string filename = std::string(
+				std::find(arg.begin(), arg.end(), ' '),
+				arg.end()
+			);
+
+			data_.recv_file(
+				srv_.create_file(login_, filename)
+			);
+
+			return {
+				{ "OK: File was uploaded." }, 23
+			};
+		}
+		return responce;
 	}
 }

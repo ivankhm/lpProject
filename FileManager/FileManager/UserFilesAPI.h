@@ -3,7 +3,6 @@
 
 #include <unordered_map>
 #include <vector>
-#include <string>
 
 namespace ftp {
 	class data_storage
@@ -17,7 +16,9 @@ namespace ftp {
 			password_(password) { }
 
 		data_storage(const std::string & password, record_t && files) : 
-			password_(password), files_(std::move(files)) { }
+			password_(password), 
+			files_(std::move(files)) 
+		{ }
 
 		~data_storage() { }
 
@@ -30,7 +31,6 @@ namespace ftp {
 		}
 
 	private:
-
 		std::string password_;
 		record_t files_;
 	};
@@ -59,13 +59,7 @@ namespace ftp {
 		}
 
 	private:
-
-		inline std::string cut_number(const std::string src, size_t position = 0) {
-			return position == 1 ?
-				std::string(src.begin(), src.begin() + src.find(' ')) : position == 2 ?
-				std::string(src.begin() + src.find(' ') + 1, src.begin() + src.find_last_of(' ')) :
-				std::string(src.begin() + src.find_last_of(' ') + 1, src.end());
-		}
+		std::string cut_number(const std::string src, size_t position = 0);
 
 		data_t data_;
 
@@ -73,5 +67,4 @@ namespace ftp {
 		static const std::string BaseLocation;
 	};
 }
-
 #endif

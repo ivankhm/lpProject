@@ -30,9 +30,6 @@
     <ClCompile Include="DataConnection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GetIp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Socket.h">
@@ -59,8 +56,10 @@
     <ClInclude Include="UserFilesAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GetIp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\_records">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

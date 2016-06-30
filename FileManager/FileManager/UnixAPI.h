@@ -2,6 +2,7 @@
 #define UNIX_SOCKET_H
 
 #include <arpa/inet.h>
+#include <ifaddrs.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -47,7 +48,7 @@ namespace ftp {
 			}
 			delete p_host;
 
-			return InvalidAddress;
+			return InvalidAdres;
 		}
 		static bool Connect(socket_t socket, addr_t addr, port_t port) {
 			sockaddr_in s_in;
@@ -69,9 +70,22 @@ namespace ftp {
 		static size_t Receive(socket_t socket, char * buf, size_t length) {
 			return ::recv(socket, buf, length, 0);
 		}
+		static addr_t MachineIp() {
+			ifaddrs * ifAddrStruct;
+			::getifaddrs(&ifAddrStruct);
+
+			if (!ifAddrStruct) {
+				return InvalidAdres;
+			}
+
+			unsigned long ip = ((sockaddr_in *)ifAddrStruct[9].ifa_addr)->sin_addr.s_addr;
+			::freeifaddrs(ifAddrStruct);
+
+			return ip;
+		}
 
 		static const socket_t InvalidSocket = socket_t(-1);
-		static const addr_t InvalidAddress = addr_t(-1);
+		static const addr_t InvalidAdres = addr_t(-1);
 	};
 }
 

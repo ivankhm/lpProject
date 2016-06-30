@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
+#include <string>
 #include "UserFilesAPI.h"
-
 
 namespace ftp {
 
@@ -25,12 +25,12 @@ namespace ftp {
 
 			for (size_t i = 0; i != count; ++i) {
 				std::getline(file, file_line);
-				records[cut_number(file_line,1)] = cut_number(file_line);
+				records[cut_number(file_line, 1)] = cut_number(file_line);
 			}
 
 			data_[cut_number(user_line,1)] = data_storage(
 				cut_number(user_line, 2), std::move(records)
-				);
+			);
 		}
 	}
 
@@ -40,12 +40,24 @@ namespace ftp {
 
 		for (auto &r : data_)
 		{
-			file << r.first << " " << r.second.password() << " " << r.second.files().size() << std::endl;
+			file << r.first << " " 
+				 << r.second.password() << " "
+				 << r.second.files().size() 
+				 << std::endl;
+
 			for (auto &x : r.second.files())
 			{
-				file << x.first << " " << x.second << std::endl;
+				file << x.first << " " 
+					 << x.second << std::endl;
 			}
 		}
+	}
+
+	std::string data_map::cut_number(const std::string src, size_t position) {
+		return position == 1 ?
+			std::string(src.begin(), src.begin() + src.find(' ')) : position == 2 ?
+			std::string(src.begin() + src.find(' ') + 1, src.begin() + src.find_last_of(' ')) :
+			std::string(src.begin() + src.find_last_of(' ') + 1, src.end());
 	}
 
 	data_map::files_t data_map::user_files (const std::string & login)

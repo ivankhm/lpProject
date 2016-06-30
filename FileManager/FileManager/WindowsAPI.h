@@ -56,9 +56,8 @@ namespace ftp {
 			if (p_host && p_host->h_addr_list) {
 				return ::inet_addr(p_host->h_addr_list[0]);
 			}
-			//delete p_host; убито 
 
-			return InvalidAddress;
+			return InvalidAdres;
 		}
 		static bool Connect(socket_t socket, addr_t addr, port_t port) {
 			SOCKADDR_IN s_in;
@@ -80,9 +79,23 @@ namespace ftp {
 		static size_t Receive(socket_t socket, char * buf, size_t length) {
 			return ::recv(socket, buf, length, 0);
 		}
+		static addr_t MachineIp() {
+			char buf[96];
+			::gethostname(buf, sizeof(buf) / sizeof(char));
+			hostent * phostent = ::gethostbyname(buf);
+
+			if (phostent && phostent->h_addr_list) {
+				in_addr addr;
+				::memcpy(&addr, phostent->h_addr_list[0], sizeof(struct in_addr));
+
+				return addr.S_un.S_addr;
+			}
+
+			return InvalidAdres;
+		}
 
 		static const socket_t InvalidSocket = socket_t(-1);
-		static const addr_t InvalidAddress = addr_t(-1);
+		static const addr_t InvalidAdres = addr_t(-1);
 	};
 
 }

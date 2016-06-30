@@ -84,10 +84,10 @@ namespace ftp {
 			bool connect(const char * ptr, port_t port) {
 				addr_t addr = TSystem::ResolveInetAddr(ptr);
 
-				if (addr == TSystem::InvalidAddress) {
+				if (addr == TSystem::InvalidAdres) {
 					addr = TSystem::ResolveDNSAddr(ptr);
 
-					if (addr == TSystem::InvalidAddress) {
+					if (addr == TSystem::InvalidAdres) {
 						return false;
 					}
 				}
@@ -127,6 +127,22 @@ namespace ftp {
 	typedef _internal::socket<unix_api> socket;
 #endif
 
-}
+	namespace _internal {
+		template<class TSystem>
+		struct utill {
+			static inline ftp::socket::addr_t MachineIp() {
+				return TSystem::MachineIp();
+			}
+		};
+	}
 
+#ifdef WINDOWS_OS
+	typedef _internal::utill<windows_api> utill;
+#endif
+
+#ifdef UNIX_OS 
+	typedef _internal::utill<unix_api> utill;
+#endif
+
+}
 #endif

@@ -32,45 +32,43 @@ namespace ftp {
 			return listen_.is_opened();
 		}
 		
-		std::string new_file(std::string &login, std::string &filename){
-			std::lock_guard<std::mutex> lock(mutex_);
+		std::string create_file(const std::string & login, const std::string & filename) {
+			std::lock_guard<mutex_t> lock(mutex_);
 			return map_.file_path(login, filename);
 		}
 
-		inline data_map::files_t get_list(std::string &login){
+		inline data_map::files_t get_list(const std::string &login) {
 			return map_.user_files(login);
 		}
 
-		inline std::string get_filename(std::string &login, std::string &file){
+		inline std::string get_file(const std::string & login, const std::string & file) {
 			return map_.file_path(login, file);
 		}
 
-		inline std::string get_login(){
-			return login;
-		}
+		static const std::string DefaultLogin;
 
 	private:
-		data_map map_;
-		mutex_t mutex_;
-		std::string login, passw;
+		static bool connection_predicate(const control_connection & src) {
+			return !src.is_working();
+		}
+
+		inline port_t first_port() {
+			return max(FirstDataport, port_);
+		}
 
 		control_connection & accept_connection();
 		void cleanup_connections();
 		port_t get_aviable_port();
 
-		static bool connection_predicate(const control_connection & src) {
-			return !src.is_working();
-		}
-
+		data_map map_;
+		mutex_t mutex_;
 		port_t port_;
-		port_t dataport_;
 		socket listen_;
 		connections_t connections_;
 
-		static const port_t ReservedDataport = port_t(1027);
+		static const port_t FirstDataport = port_t(1027);
 		static const size_t ListenCount = size_t(5);
 	};
 }
-
 
 #endif
